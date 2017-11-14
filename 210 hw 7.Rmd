@@ -87,7 +87,7 @@ summary(mod7)
 
 e). Overall, do we have any statistical evidence that it was important to adjust for (matched) AGE or STRATUM? Why or why not? Briefly explain. (However, if one designs a study using matching, one should analyze the study using matching. And, if one matches on strata based on age, one cannot estimate the influence of age on the outcome.)
 
-__Age is associated with history of premature labor, associated with birth weight regardless of history of premature labor, and is not a downstream consequence of history of premature labor and birth weight. Thus, age is a confounder of the association between history of premature labor and birth weight. The coefficient of ptd is 6.09 when it is matched upon, and when it is not matched upon, it is 1.97 The difference is greater than a 10% percent change. As age is a meaningful confounder of the association between history of premature labor and birth weight, it is important to adjust for (matched) age or stratum.__ 
+__We cannot obtain any statistical evidence of whether age is a statistically meaningful confounder as we are matching upon age (thus its effects are embedded in alpha coefficients, which we cannot measure). However, by definition, age is associated with history of premature labor, associated with birth weight regardless of history of premature labor, and is not a downstream consequence of history of premature labor and birth weight. Thus, age is a potential confounder of the association between history of premature labor and birth weight, therefore it is a good idea to match on it.__ 
 
 f). Can we assess whether or not age is an effect modifier of any of the other variables you have found to be statistically significant above? If so, assess potential effect modification, or if not, briefly explain why not.
 
@@ -101,7 +101,7 @@ summary(mod7)
 
 g). Finally, compare your results to that where you use (unconditional) logistic regression on the whole sample, and you adjust for age as a covariate. Is this a good approach to use? Why or why not?
 
-__We get similar beta coefficients (and both statistically significant) for PTD between the conditional logistic regression and unconditional logistic regression model (1.93 vs 1.97).  However, this is not a good approach to use because our study was conducted by matching cases and controls by age, and the unconditional logistic regression method deviates from the original intent of our study.__ 
+__We get similar beta coefficients for PTD between the conditional logistic regression (1.94, p-value: 0.001) and unconditional logistic regression model (1.97, p-value: 0.0004). In addition, our standard errors around PTD is similar between the conditional logistic regression (0.591) and logistic regression models (0.554). However, running an unconditional logistic regression is not a good approach because this was a case-control study. We need to take into account the case-control study design in our modeling.__ 
 
 ```{r}
 mod8 <- glm(low ~ ptd + age, data = lowbwt, family = "binomial")
@@ -141,9 +141,20 @@ summary(mod11)
 
 b). Consider the model looking at the effects of (linear) cigpday on lung cancer incidence, adjusting for (linear) smokedur (with no interaction). What is a point estimate and 95% CI for the IRR for the effects of 20 cigarettes/day, adjusting for smoking duration? Also, does this model show evidence of lack of fit? Considering how many cases of lung cancer occurred in the dataset and the number of covariate patterns, do you trust a goodness-of-fit test? Briefly comment.
 
-__The IRR for the effects of 20 cigarettes/day, adjusting for smoking duration is exp((20)(0.0667)), or 3.80, with a 95% CI of (exp(20(0.0667 - (1.96)0.00632), exp(20(0.0667 + (1.96)0.00632)), or (2.96, 4.87). The deviance measures are more than 1 times the degree of freedom, suggesting that this model has variance > mean and lacks good fit. There are no good GOF tests for Poisson models with large number of covariate patterns (as is in this case), but taking the ratio of deviance to df can be one way to assess generally if the model is overdispersed.__  
+__The incidence rate of lung cancer is 3.8 times higher among those who smoke 20 cigarettes/day to those who don't smoke any cigarettes/day, adjusting for smoking duration. With 95% confidence, the incidence rate ratio comparing those who smoke 20 cigarettes/day to those who don't smoke any cigarettes/day is between 2.96 and 4.87.
+ 
+Based on the LRT test between the intercept only model and model with linear effects of cigpday adjusting for linear smokedur, we conclude that the latter model is preferred (p-value < 0.0001). The goodness-of-fit was also assessed by looking at the pearson chi square statistic (Lab 11, pg 9): 
+.
+Pearson chi square statistic: 64.3, p-value=.296
+	
+However, we don't trust the goodness-of-fit test since we have 63 covariate patterns for small number of small number of cases. Consequently, we won't have enough observation in each covariate pattern. Therefore we don't think that the our calculated Pearson chi square statistic follows a chi square distribution with 59 degrees of freedom.  
 
-__Because of potential evidence of lack of fit and to consider possible nonlinear effects of cigpday and smokedur on lung cancer incidence, a number of additional analyses should be performed.__
+Since we have a large number of covariate patterns relative to the sample size, we instead decided to do a more empirical check on the goodness-of-fit:
+
+Deviance / (J - (p+1)) = 1.37
+Chi2 statistics / (J - (p+1)) = 1.07
+
+However, we don't think both the Pearson chi square test statistic and the empirical checks are appropriate for this scenario. There we should still be concerned about overdispersion.__
 
 c). Consider a model including linear and quadratic effects of both cigpday and smokedur. Does this model show improvements relative to the model including only linear covariates? Using this model, calculate a point estimate and 95% CI for the IRR for the effects of 20 vs. 0 cigarettes/day, and for the effects of 40 vs. 20 cigarettes/day, adjusting for linear and quadratic smokedur. Note that these point estimates and confidence intervals are not the same due to the quadratic effects of cigpday included in this model.
 
