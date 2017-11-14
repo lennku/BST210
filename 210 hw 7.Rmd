@@ -141,20 +141,20 @@ summary(mod11)
 
 b). Consider the model looking at the effects of (linear) cigpday on lung cancer incidence, adjusting for (linear) smokedur (with no interaction). What is a point estimate and 95% CI for the IRR for the effects of 20 cigarettes/day, adjusting for smoking duration? Also, does this model show evidence of lack of fit? Considering how many cases of lung cancer occurred in the dataset and the number of covariate patterns, do you trust a goodness-of-fit test? Briefly comment.
 
-__The incidence rate of lung cancer is 3.8 times higher among those who smoke 20 cigarettes/day to those who don't smoke any cigarettes/day, adjusting for smoking duration. With 95% confidence, the incidence rate ratio comparing those who smoke 20 cigarettes/day to those who don't smoke any cigarettes/day is between 2.96 and 4.87.
+__The incidence rate of lung cancer is 3.8 times higher among those who smoke 20 cigarettes/day to those who don't smoke any cigarettes/day, adjusting for smoking duration. With 95% confidence, the incidence rate ratio comparing those who smoke 20 cigarettes/day to those who don't smoke any cigarettes/day is between 2.96 and 4.87.__
  
-Based on the LRT test between the intercept only model and model with linear effects of cigpday adjusting for linear smokedur, we conclude that the latter model is preferred (p-value < 0.0001). The goodness-of-fit was also assessed by looking at the pearson chi square statistic (Lab 11, pg 9): 
-.
-Pearson chi square statistic: 64.3, p-value=.296
+__Based on the LRT test between the intercept only model and model with linear effects of cigpday adjusting for linear smokedur, we conclude that the latter model is preferred (p-value < 0.0001). The goodness-of-fit was also assessed by looking at the pearson chi square statistic (Lab 11, pg 9):__
+
+__Pearson chi square statistic: 64.3, p-value=.296__
 	
-However, we don't trust the goodness-of-fit test since we have 63 covariate patterns for small number of small number of cases. Consequently, we won't have enough observation in each covariate pattern. Therefore we don't think that the our calculated Pearson chi square statistic follows a chi square distribution with 59 degrees of freedom.  
+__However, we don't trust the goodness-of-fit test since we have 63 covariate patterns for small number of small number of cases. Consequently, we won't have enough observation in each covariate pattern. Therefore we don't think that the our calculated Pearson chi square statistic follows a chi square distribution with 59 degrees of freedom.__  
 
-Since we have a large number of covariate patterns relative to the sample size, we instead decided to do a more empirical check on the goodness-of-fit:
+__Since we have a large number of covariate patterns relative to the sample size, we instead decided to do a more empirical check on the goodness-of-fit:__
 
-Deviance / (J - (p+1)) = 1.37
-Chi2 statistics / (J - (p+1)) = 1.07
+__Deviance / (J - (p+1)) = 1.37__
+__Chi2 statistics / (J - (p+1)) = 1.07__
 
-However, we don't think both the Pearson chi square test statistic and the empirical checks are appropriate for this scenario. There we should still be concerned about overdispersion.__
+__However, we don't think both the Pearson chi square test statistic and the empirical checks are appropriate for this scenario. There we should still be concerned about overdispersion.__
 
 c). Consider a model including linear and quadratic effects of both cigpday and smokedur. Does this model show improvements relative to the model including only linear covariates? Using this model, calculate a point estimate and 95% CI for the IRR for the effects of 20 vs. 0 cigarettes/day, and for the effects of 40 vs. 20 cigarettes/day, adjusting for linear and quadratic smokedur. Note that these point estimates and confidence intervals are not the same due to the quadratic effects of cigpday included in this model.
 
