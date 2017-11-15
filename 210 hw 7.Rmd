@@ -24,7 +24,7 @@ colnames(lowbwt) <- tolower(colnames(lowbwt))
 a). Perform a backward elimination model selection method by hand using all three controls matched with each case. What important predictor variable(s) are you left with? Write a one or two sentence summary of your findings, suitable for inclusion in a manuscript.
 
 __We are left with just the ptd (history of premature labor) covariate in our model.__
-__Our model suggests that history of premature labor is a significant predictor of low birthweight, after controlling for mother's age. Smoking, hypertension, uterine irritability, and weight (in lbs) at last menstrual period are not significant covariates, thus excluded from our model.__ 
+__After performing a backward elimination model selection with alpha = 0.05, we are left with a conditional logistic regression model with a single covariate for premature labor after matching cases and controls. Our model suggests that history of premature labor is a significant predictor of low birthweight, after controlling for mother's age.__ 
 
 ```{r}
 library(survival)
@@ -87,11 +87,11 @@ summary(mod7)
 
 e). Overall, do we have any statistical evidence that it was important to adjust for (matched) AGE or STRATUM? Why or why not? Briefly explain. (However, if one designs a study using matching, one should analyze the study using matching. And, if one matches on strata based on age, one cannot estimate the influence of age on the outcome.)
 
-__We cannot obtain any statistical evidence of whether age is a statistically meaningful confounder as we are matching upon age (thus its effects are embedded in alpha coefficients, which we cannot measure). However, by definition, age is associated with history of premature labor, associated with birth weight regardless of history of premature labor, and is not a downstream consequence of history of premature labor and birth weight. Thus, age is a potential confounder of the association between history of premature labor and birth weight, therefore it is a good idea to match on it.__ 
+__We cannot obtain any statistical evidence of whether age is a statistically meaningful confounder as we are matching upon age (thus its effects are embedded in the alpha coefficients, which we cannot measure). However, by definition, age is associated with history of premature labor, associated with birth weight regardless of history of premature labor, and is not a downstream consequence of history of premature labor and birth weight. Thus, age is a potential confounder of the association between history of premature labor and birth weight, therefore it is a good idea to match on it.__ 
 
 f). Can we assess whether or not age is an effect modifier of any of the other variables you have found to be statistically significant above? If so, assess potential effect modification, or if not, briefly explain why not.
 
-__Age is not an effect modifier of ptd on low birthweight, as the ptd*age interaction term has a P value of 0.535, which is not significant at the alpha = 0.05 level.__
+__Age is not an effect modifier of ptd on low birthweight, as the ptd x age interaction term has a P value of 0.535, which is not significant at the alpha = 0.05 level.__
 
 ```{r}
 mod7 <- clogit(low ~ ptd + ptd*age + strata(stratum), data = lowbwt)
@@ -126,7 +126,9 @@ View(lungca)
 
 a). Our main interest is in the effects of cigpday on lung cancer incidence. Do we have any evidence that (linear) smokedur (a surrogate for both age and smoking duration, given it is coded as age - 20, under the assumption that most smokers started smoking around age 20) is a confounder or an effect modifier of the effects of (linear) cigpday on (log of) lung cancer incidence? Justify your responses, and summarize your overall findings briefly (e.g., in terms of incidence rate ratios). 
 
-__smokedur is associated with cigpday, associated with lung cancer regardless of cigpday, and is not a downstream consequence of cigpday or lung cancer. Thus, smokedur is a confounder. However, we do not have evidence that smokedur is a meaningful confounder or significant effect modifier of the effects of linear cigpday on log of lung cancer incidence. Adding smokedur into our model does not change the beta coefficient of cigpday more than 10% (from 0.07 to 0.67), and adding cigpday x smokedur into our model does not yield a beta coefficient with a significant p value for this interaction (p = 0.68). smokedur is a significant predictor of lung cancer, however. Thus our overall finding is that the incidence rate of lung cancer is e^0.067 (or 1.07) times higher with every one unit increase in cigarettes per day (cigpday) while holding smokedur constant, and the incidence rate of lung cancer is e^0.11 (or 1.12) times higher with every one unit increases in smoking duration while holding cigpday constant.__ 
+__Smoking duration is associated with cigarettes/day, associated with lung cancer regardless of cigarettes/day, and is not a downstream consequence of cigarettes/day or lung cancer. Thus, smoking duration meets the definition of a confounder. However, we do not have evidence that smoking duration is a meaningful confounder or significant effect modifier of linear cigarettes/day on log of lung cancer incidence. Adding smoking duration into our model does not change the beta coefficient of cigarettes/day by more than 10% (from 0.07 to 0.067), and adding the interaction term of cigarettes/day and smoking duration into our model does not yield a beta coefficient that is statistically significant (p = 0.68). However, smoking duration is a significant predictor of lung cancer (p-value <0.0001). Therefore, we prefer the model with covariates for smoking duration and cigarettes per day.__  
+
+__Using the model with smoking duration and cigarettes/day, our overall finding is that the incidence rate of lung cancer is 1.07 times higher for every one unit increase in cigarettes per day, holding smoking duration constant. The incidence rate of lung cancer is 1.12 times higher with every one unit increases in smoking duration, holding cigarettes per day constant.__ 
 
 ```{r}
 mod9 <- glm(cases ~ cigpday, offset = log(manyears), data = lungca, family = "poisson")
@@ -145,16 +147,16 @@ __The incidence rate of lung cancer is 3.8 times higher among those who smoke 20
  
 __Based on the LRT test between the intercept only model and model with linear effects of cigpday adjusting for linear smokedur, we conclude that the latter model is preferred (p-value < 0.0001). The goodness-of-fit was also assessed by looking at the pearson chi square statistic (Lab 11, pg 9):__
 
-__Pearson chi square statistic: 64.3, p-value=.296__
+__Pearson chi square statistic: 64.3, p-value=.328__
 	
-__However, we don't trust the goodness-of-fit test since we have 63 covariate patterns for small number of small number of cases. Consequently, we won't have enough observation in each covariate pattern. Therefore we don't think that the our calculated Pearson chi square statistic follows a chi square distribution with 59 degrees of freedom.__  
+__However, we don't trust the goodness-of-fit test since we have 63 covariate patterns for small number of cases. Consequently, we won't have enough observation in each covariate pattern. Therefore, we don't think that our calculated Pearson chi square statistic follows a chi square distribution with 60 degrees of freedom.__  
 
 __Since we have a large number of covariate patterns relative to the sample size, we instead decided to do a more empirical check on the goodness-of-fit:__
 
 __Deviance / (J - (p+1)) = 1.37__
 __Chi2 statistics / (J - (p+1)) = 1.07__
 
-__However, we don't think both the Pearson chi square test statistic and the empirical checks are appropriate for this scenario. There we should still be concerned about overdispersion.__
+__However, we don't think both the Pearson chi square test statistic and the empirical checks are appropriate for this scenario. Therefore, we should still be concerned about overdispersion.__
 
 c). Consider a model including linear and quadratic effects of both cigpday and smokedur. Does this model show improvements relative to the model including only linear covariates? Using this model, calculate a point estimate and 95% CI for the IRR for the effects of 20 vs. 0 cigarettes/day, and for the effects of 40 vs. 20 cigarettes/day, adjusting for linear and quadratic smokedur. Note that these point estimates and confidence intervals are not the same due to the quadratic effects of cigpday included in this model.
 
@@ -255,4 +257,4 @@ summary(mod16)
 
 g). Review the various models you have run above (plus any others you may decide to run) and determine which model you think fits the data best. Briefly describe your reasoning in choosing your model, and briefly describe your findings in a few sentences, and possibly including a small table, if you think that is appropriate.
 
-__From part (f) we decided that the assumption of the mean and the variance being equal was a reasonable one. Hence, the Poisson regression model is an appropriate model to use to evaluate the dose-response effects of cigarette smoking on lung cancer incidence. We also decided from part (f) that the model with linear and quadratic effects of cigpday and smokedur is better than the categorical model based on the AIC score (191 vs. 201). We also determined in part (d) that the we prefer the model with linear and quadratic effects of cigpday and smokedur with no interaction terms. When comparing the AIC scores between the model with and without the interaction terms, we notice that the AIC score is slightly better for the model with the interaction term (190 vs 191). However, the difference is so small that our conclusion doesn't change, and we prefer the more parsimonious model (cases ~ cigpday + smokedur + cigpday^2 + smokedur^2) without the interaction term.__
+__From part (f) we decided that the assumption of the mean and the variance being equal was a reasonable one. Hence, the Poisson regression model is an appropriate model to use to evaluate the dose-response effects of cigarette smoking on lung cancer incidence. We also decided from part (f) that the model with linear and quadratic effects of cigpday and smokedur is better than the categorical model based on the AIC score (191 vs. 201). We also determined in part (d) that the we prefer the model with linear and quadratic effects of cigpday and smokedur with no interaction terms. When comparing the AIC scores between the model with and without the interaction terms, we notice that the AIC score is slightly better for the model with the interaction term (190 vs 191). However, the difference is so small that our conclusion doesn't change, and we prefer the more parsimonious model without the interaction term.__
